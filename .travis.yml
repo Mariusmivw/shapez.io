@@ -27,8 +27,7 @@ jobs:
             - tar -czf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
           deploy:
             provider: releases
-            username: "Mariusmivw"
-            password: "2EwH2eWp!"
+            token: 7125ccf3f96884a402e913d6fbe56b1dc958e0e1
             file: shapez.io-standalone.tar.gz
             skip_cleanup: true
             draft: true
