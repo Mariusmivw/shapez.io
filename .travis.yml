@@ -12,27 +12,27 @@ jobs:
     include:
         # OS: MAC
         ## -> build darwin
-         - name: "Standalone MacOS on MacOS"
-           os: osx
-           osx_image: xcode11.3
-           before_install:
-             - HOMEBREW_NO_AUTO_UPDATE=1 brew install git-lfs
-             - HOMEBREW_NO_AUTO_UPDATE=1 brew install ffmpeg
-           script:
-             - cd gulp
-             - yarn gulp build.standalone-prod || travis_terminate 1
-             - yarn gulp standalone.prepare
-             - yarn gulp standalone.package.prod.darwin64
-             - cd ..
-             - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
-           deploy:
-             provider: releases
-             user: "Mariusmivw"
-             password: "2EwH2eWp!"
-             file: shapez.io-standalone.tar.gz
-             skip_cleanup: true
-             on:
-               tags: true
+        - name: "Standalone MacOS on MacOS"
+          os: osx
+          osx_image: xcode11.3
+          before_install:
+            - HOMEBREW_NO_AUTO_UPDATE=1 brew install git-lfs
+            - HOMEBREW_NO_AUTO_UPDATE=1 brew install ffmpeg
+          script:
+            - cd gulp
+            - yarn gulp build.standalone-prod || travis_terminate 1
+            - yarn gulp standalone.prepare
+            - yarn gulp standalone.package.prod.darwin64
+            - cd ..
+            - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
+          deploy:
+            provider: releases
+            user: "Mariusmivw"
+            password: "2EwH2eWp!"
+            file: shapez.io-standalone.tar.gz
+            skip_cleanup: true
+            on:
+              tags: true
 
         ## -> build win
         # - name: "Standalone Windows on MacOS"
