@@ -24,15 +24,15 @@ jobs:
              - yarn gulp standalone.prepare
              - yarn gulp standalone.package.prod.darwin64
              - cd ..
-            - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
-          deploy:
-            provider: releases
-            user: "Mariusmivw"
-            password: "2EwH2eWp!"
-            file: shapez.io-standalone.tar.gz
-            skip_cleanup: true
-            on:
-              tags: true
+             - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
+           deploy:
+             provider: releases
+             user: "Mariusmivw"
+             password: "2EwH2eWp!"
+             file: shapez.io-standalone.tar.gz
+             skip_cleanup: true
+             on:
+               tags: true
 
         ## -> build win
         # - name: "Standalone Windows on MacOS"
