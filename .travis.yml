@@ -24,7 +24,7 @@ jobs:
             - yarn gulp standalone.prepare
             - yarn gulp standalone.package.prod.darwin64
             - cd ..
-            - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
+            - tar -czf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
           deploy:
             provider: releases
             username: "Mariusmivw"
@@ -32,6 +32,7 @@ jobs:
             file: shapez.io-standalone.tar.gz
             skip_cleanup: true
             draft: true
+            edge: true # opt in to dpl v2
             on:
               branch: test
               tags: false
