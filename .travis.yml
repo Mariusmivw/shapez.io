@@ -27,12 +27,13 @@ jobs:
             - tar -czvf shapez.io-standalone.tar.gz tmp_standalone_files/shapez.io-standalone*
           deploy:
             provider: releases
-            user: "Mariusmivw"
+            username: "Mariusmivw"
             password: "2EwH2eWp!"
             file: shapez.io-standalone.tar.gz
             skip_cleanup: true
+            draft: true
             on:
-              tags: true
+              tags: false
 
         ## -> build win
         # - name: "Standalone Windows on MacOS"
