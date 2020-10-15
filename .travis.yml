@@ -33,6 +33,7 @@ jobs:
             skip_cleanup: true
             draft: true
             on:
+              branch: test
               tags: false
 
         ## -> build win
