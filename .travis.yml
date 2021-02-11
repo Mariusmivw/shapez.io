@@ -83,22 +83,22 @@ jobs:
         #       - cd ..
 
         ## -> build linux
-        # - name: "Standalone Linux on Linux"
-        #   os: linux
-        #   addons:
-        #       apt:
-        #           packages:
-        #               - libavformat-dev
-        #               - libavfilter-dev
-        #               - libavdevice-dev
-        #               - ffmpeg
-        #   script:
-        #       - cd gulp
-        #       - yarn gulp build.standalone-prod || travis_terminate 1
-        #       - yarn gulp standalone.prepare
-        #       - yarn gulp standalone.package.prod.linux64
-        #       - yarn gulp standalone.package.prod.linux32
-        #       - cd ..
+        - name: "Standalone Linux on Linux"
+          os: linux
+          addons:
+              apt:
+                  packages:
+                      - libavformat-dev
+                      - libavfilter-dev
+                      - libavdevice-dev
+                      - ffmpeg
+          script:
+              - cd gulp
+              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp standalone.prepare
+              - yarn gulp standalone.package.prod.linux64
+              - yarn gulp standalone.package.prod.linux32
+              - cd ..
 
         # OS: WINDOWS
         ## -> build darwin
@@ -123,23 +123,23 @@ jobs:
         #       - cd ..
 
         ## -> build win
-        - name: "Standalone Windows on Windows"
-          os: windows
-          env: YARN_GPG=no
-          before_install:
-              - choco install git-lfs -y -f || echo "0" # choco fails but git-lfs is still installed
-              - choco install ffmpeg --version=4.2.3
-              - choco install wget
-              - export PATH=/C/ProgramData/chocolatey/lib/ffmpeg/tools/ffmpeg/bin:$PATH
-              - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/avicap32.dll -P /C/Windows/System32/
-              - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/msvfw32.dll -P /C/Windows/System32/
-          script:
-              - cd gulp
-              - yarn gulp build.standalone-prod || travis_terminate 1
-              - yarn gulp standalone.prepare
-              - yarn gulp standalone.package.prod.win64
-              - yarn gulp standalone.package.prod.win32
-              - cd ..
+        # - name: "Standalone Windows on Windows"
+        #   os: windows
+        #   env: YARN_GPG=no
+        #   before_install:
+        #       - choco install git-lfs -y -f || echo "0" # choco fails but git-lfs is still installed
+        #       - choco install ffmpeg --version=4.2.3
+        #       - choco install wget
+        #       - export PATH=/C/ProgramData/chocolatey/lib/ffmpeg/tools/ffmpeg/bin:$PATH
+        #       - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/avicap32.dll -P /C/Windows/System32/
+        #       - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/msvfw32.dll -P /C/Windows/System32/
+        #   script:
+        #       - cd gulp
+        #       - yarn gulp build.standalone-prod || travis_terminate 1
+        #       - yarn gulp standalone.prepare
+        #       - yarn gulp standalone.package.prod.win64
+        #       - yarn gulp standalone.package.prod.win32
+        #       - cd ..
 
     # mark build as finished even if "allow_failures" are still running
     fast_finish: true
