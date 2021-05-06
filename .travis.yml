@@ -12,18 +12,18 @@ jobs:
     include:
         # OS: MAC
         ## -> build darwin
-        # - name: "Standalone MacOS on MacOS"
-        #   os: osx
-        #   osx_image: xcode11.3
-        #   before_install:
-        #     - HOMEBREW_NO_AUTO_UPDATE=1 brew install git-lfs
-        #     - HOMEBREW_NO_AUTO_UPDATE=1 brew install ffmpeg
-        #   script:
-        #     - cd gulp
-        #     - yarn gulp build.standalone-prod || travis_terminate 1
-        #     - yarn gulp standalone.prepare
-        #     - yarn gulp standalone.package.prod.darwin64
-        #     - cd ..
+        - name: "Standalone MacOS on MacOS"
+          os: osx
+          osx_image: xcode11.3
+          before_install:
+            - HOMEBREW_NO_AUTO_UPDATE=1 brew install git-lfs
+            - HOMEBREW_NO_AUTO_UPDATE=1 brew install ffmpeg
+          script:
+            - cd gulp
+            - yarn gulp build.standalone-prod || travis_terminate 1
+            - yarn gulp standalone.prepare
+            - yarn gulp standalone.package.prod.darwin64
+            - cd ..
 
         ## -> build win
         # - name: "Standalone Windows on MacOS"
@@ -64,23 +64,23 @@ jobs:
         ## not possible
 
         ## -> build win
-        # - name: "Standalone Windows on Linux"
-        #   os: linux
-        #   addons:
-        #       apt:
-        #           packages:
-        #               - libavformat-dev
-        #               - libavfilter-dev
-        #               - libavdevice-dev
-        #               - ffmpeg
-        #               - wine
-        #   script:
-        #       - cd gulp
-        #       - yarn gulp build.standalone-prod || travis_terminate 1
-        #       - yarn gulp standalone.prepare
-        #       - yarn gulp standalone.package.prod.win64
-        #       - yarn gulp standalone.package.prod.win32
-        #       - cd ..
+        - name: "Standalone Windows on Linux"
+          os: linux
+          addons:
+              apt:
+                  packages:
+                      - libavformat-dev
+                      - libavfilter-dev
+                      - libavdevice-dev
+                      - ffmpeg
+                      - wine
+          script:
+              - cd gulp
+              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp standalone.prepare
+              - yarn gulp standalone.package.prod.win64
+              - yarn gulp standalone.package.prod.win32
+              - cd ..
 
         ## -> build linux
         - name: "Standalone Linux on Linux"
