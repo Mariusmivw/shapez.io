@@ -176,8 +176,8 @@ function gulptasksJS($, gulp, buildFolder, browserSync) {
             .pipe(gulp.dest(buildFolder));
     });
 
-    gulp.task("js.standalone-prod", () => {
-        return gulp
+    gulp.task("js.standalone-prod", async () => {
+        return await gulp
             .src("../src/js/main.js")
             .pipe(
                 $.webpackStream(
@@ -192,8 +192,8 @@ function gulptasksJS($, gulp, buildFolder, browserSync) {
             .pipe(gulp.dest(buildFolder));
     });
 
-    gulp.task("china.js.standalone-prod", () => {
-        return gulp
+    gulp.task("china.js.standalone-prod", async () => {
+        return await gulp
             .src("../src/js/main.js")
             .pipe(
                 $.webpackStream(
