@@ -20,7 +20,7 @@ jobs:
             - HOMEBREW_NO_AUTO_UPDATE=1 brew install ffmpeg
           script:
             - cd gulp
-            - yarn gulp build.standalone-prod || travis_terminate 1
+            - yarn gulp build.standalone-prod
             - yarn gulp standalone.prepare
             - yarn gulp standalone.package.prod.darwin64
             - cd ..
@@ -76,7 +76,7 @@ jobs:
                       - wine
           script:
               - cd gulp
-              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp build.standalone-prod
               - yarn gulp standalone.prepare
               - yarn gulp standalone.package.prod.win64
               - yarn gulp standalone.package.prod.win32
@@ -94,7 +94,7 @@ jobs:
                       - ffmpeg
           script:
               - cd gulp
-              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp build.standalone-prod
               - yarn gulp standalone.prepare
               - yarn gulp standalone.package.prod.linux64
               - yarn gulp standalone.package.prod.linux32
