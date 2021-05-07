@@ -182,8 +182,8 @@ function gulptasksImageResources($, gulp, buildFolder) {
     );
 
     // Cleans up unused images which are instead inline into the css
-    gulp.task("imgres.cleanupUnusedCssInlineImages", () => {
-        return gulp
+    gulp.task("imgres.cleanupUnusedCssInlineImages", async () => {
+        return await gulp
             .src(
                 [
                     path.join(buildFolder, "res", "ui", "**", "*.png"),
