@@ -27,7 +27,7 @@ jobs:
       draft: 'true'
       on:
         repo: Mariusmivw/shapez.io
-        branch: test
+        branch: deploy_test
       skip_cleanup: 'true'
   - name: Standalone Windows on Windows
     os: windows
