@@ -43,9 +43,10 @@
         .languageChoose {
             @include S(border-radius, 8px);
             border: solid #222428;
-            background-color: #fff;
             @include S(border-width, 2px);
-            background-size: cover;
+            background-color: #222428 !important;
+            background-size: contain !important;
+            background-position: center center !important;
             opacity: 0.8;
         }
     }
@@ -145,12 +146,10 @@
                 pointer-events: all;
                 transition: all 0.12s ease-in;
                 transition-property: opacity, transform;
-                transform: skewX(-0.5deg);
 
                 @include S(border-radius, $globalBorderRadius);
 
                 &:hover {
-                    transform: scale(1.02);
                     opacity: 0.9;
                 }
             }
@@ -184,7 +183,7 @@
         .updateLabel {
             position: absolute;
             transform: translateX(50%) rotate(-5deg);
-            color: rgb(231, 78, 58);
+            color: #ff590b;
             @include Heading;
             font-weight: bold;
             @include S(right, 40px);
@@ -243,6 +242,16 @@
             align-items: center;
         }
 
+        .modeButtons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            @include S(grid-column-gap, 10px);
+            align-items: start;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
         .browserWarning {
             @include S(margin-bottom, 10px);
             background-color: $colorRedBright;
@@ -281,6 +290,18 @@
         }
 
         .newGameButton {
+            @include IncreasedClickArea(0px);
+            @include S(margin-top, 15px);
+            @include S(margin-left, 15px);
+        }
+
+        .playModeButton {
+            @include IncreasedClickArea(0px);
+            @include S(margin-top, 15px);
+            @include S(margin-left, 15px);
+        }
+
+        .editModeButton {
             @include IncreasedClickArea(0px);
             @include S(margin-top, 15px);
             @include S(margin-left, 15px);
@@ -440,6 +461,27 @@
         }
     }
 
+    .bottomContainer {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: row;
+        @include S(padding-top, 10px);
+        height: 100%;
+        width: 100%;
+        box-sizing: border-box;
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            @include S(grid-column-gap, 10px);
+            align-items: start;
+            height: 100%;
+            width: 100%;
+            box-sizing: border-box;
+        }
+    }
+
     .footer {
         display: grid;
         flex-grow: 1;
@@ -450,6 +492,10 @@
         @include S(padding, 10px);
         box-sizing: border-box;
         @include S(grid-gap, 4px);
+
+        &.china {
+            grid-template-columns: auto 1fr;
+        }
 
         .author {
             flex-grow: 1;

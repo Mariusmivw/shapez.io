@@ -3,6 +3,7 @@ import { DrawParameters } from "../core/draw_parameters";
 import { findNiceIntegerValue } from "../core/utils";
 import { Vector } from "../core/vector";
 import { Entity } from "./entity";
+import { ACHIEVEMENTS } from "../platform/achievement_provider";
 import { GameRoot } from "./root";
 
 export class Blueprint {
@@ -148,21 +149,31 @@ export class Blueprint {
      */
     tryPlace(root, tile) {
         return root.logic.performBulkOperation(() => {
-            let anyPlaced = false;
-            for (let i = 0; i < this.entities.length; ++i) {
-                const entity = this.entities[i];
-                if (!root.logic.checkCanPlaceEntity(entity, tile)) {
-                    continue;
+            return root.logic.performImmutableOperation(() => {
+                let count = 0;
+                for (let i = 0; i < this.entities.length; ++i) {
+                    const entity = this.entities[i];
+                    if (!root.logic.checkCanPlaceEntity(entity, tile)) {
+                        continue;
+                    }
+
+                    const clone = entity.clone();
+                    clone.components.StaticMapEntity.origin.addInplace(tile);
+                    root.logic.freeEntityAreaBeforeBuild(clone);
+                    root.map.placeStaticEntity(clone);
+                    root.entityMgr.registerEntity(clone);
+                    count++;
                 }
 
-                const clone = entity.clone();
-                clone.components.StaticMapEntity.origin.addInplace(tile);
-                root.logic.freeEntityAreaBeforeBuild(clone);
-                root.map.placeStaticEntity(clone);
-                root.entityMgr.registerEntity(clone);
-                anyPlaced = true;
-            }
-            return anyPlaced;
+                root.signals.bulkAchievementCheck.dispatch(
+                    ACHIEVEMENTS.placeBlueprint,
+                    count,
+                    ACHIEVEMENTS.placeBp1000,
+                    count
+                );
+
+                return count !== 0;
+            });
         });
     }
 }

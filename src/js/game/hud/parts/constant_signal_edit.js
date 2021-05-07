@@ -13,6 +13,10 @@ export class HUDConstantSignalEdit extends BaseHUDPart {
      * @param {enumMouseButton} button
      */
     downPreHandler(pos, button) {
+        if (this.root.currentLayer !== "wires") {
+            return;
+        }
+
         const tile = this.root.camera.screenToWorld(pos).toTileSpace();
         const contents = this.root.map.getLayerContentXY(tile.x, tile.y, "wires");
         if (contents) {
@@ -22,9 +26,6 @@ export class HUDConstantSignalEdit extends BaseHUDPart {
                     this.root.systemMgr.systems.constantSignal.editConstantSignal(contents, {
                         deleteOnCancel: false,
                     });
-                    return STOP_PROPAGATION;
-                } else if (button === enumMouseButton.right) {
-                    this.root.logic.tryDeleteBuilding(contents);
                     return STOP_PROPAGATION;
                 }
             }

@@ -19,6 +19,8 @@ declare const G_BUILD_VERSION: string;
 declare const G_ALL_UI_IMAGES: Array<string>;
 declare const G_IS_RELEASE: boolean;
 
+declare const G_CHINA_VERSION: boolean;
+
 // Polyfills
 declare interface String {
     replaceAll(search: string, replacement: string): string;
@@ -183,6 +185,7 @@ declare const STOP_PROPAGATION = "stop_propagation";
 
 declare interface TypedSignal<T extends Array<any>> {
     add(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
+    addToTop(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void, scope?: object);
     remove(receiver: (...args: T) => /* STOP_PROPAGATION */ string | void);
 
     dispatch(...args: T): /* STOP_PROPAGATION */ string | void;

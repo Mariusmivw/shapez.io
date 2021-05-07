@@ -15,6 +15,7 @@ import {
     removeAllChildren,
 } from "../../../core/utils";
 import { Vector } from "../../../core/vector";
+import { ACHIEVEMENTS } from "../../../platform/achievement_provider";
 import { T } from "../../../translations";
 import { BaseItem } from "../../base_item";
 import { MetaHubBuilding } from "../../buildings/hub";
@@ -99,16 +100,14 @@ export class HUDWaypoints extends BaseHUDPart {
 
         this.directionIndicatorSprite = Loader.getSprite("sprites/misc/hub_direction_indicator.png");
 
-        /** @type {Array<Waypoint>}
-         */
-        this.waypoints = [
-            {
-                label: null,
-                center: { x: 0, y: 0 },
-                zoomLevel: 3,
-                layer: gMetaBuildingRegistry.findByClass(MetaHubBuilding).getLayer(),
-            },
-        ];
+        /** @type {Array<Waypoint>} */
+        this.waypoints = [];
+        this.waypoints.push({
+            label: null,
+            center: { x: 0, y: 0 },
+            zoomLevel: 3,
+            layer: gMetaBuildingRegistry.findByClass(MetaHubBuilding).getLayer(),
+        });
 
         // Create a buffer we can use to measure text
         this.dummyBuffer = makeOffscreenBuffer(1, 1, {
@@ -348,6 +347,10 @@ export class HUDWaypoints extends BaseHUDPart {
         this.root.hud.signals.notification.dispatch(
             T.ingame.waypoints.creationSuccessNotification,
             enumNotificationType.success
+        );
+        this.root.signals.achievementCheck.dispatch(
+            ACHIEVEMENTS.mapMarkers15,
+            this.waypoints.length - 1 // Disregard HUB
         );
 
         // Re-render the list and thus add it

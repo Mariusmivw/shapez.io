@@ -15,6 +15,7 @@ import {
     startFileChoose,
     waitNextFrame,
 } from "../core/utils";
+import { enumGameModeIds } from "../game/game_mode";
 import { HUDModalDialogs } from "../game/hud/parts/modal_dialogs";
 import { getApplicationSettingById } from "../profile/application_settings";
 import { T } from "../translations";
@@ -42,7 +43,12 @@ export class MainMenuState extends GameState {
 
         return `
             <div class="topButtons">
-                <button class="languageChoose" data-languageicon="${this.app.settings.getLanguage()}"></button>
+                ${
+                    G_CHINA_VERSION
+                        ? ""
+                        : `<button class="languageChoose" data-languageicon="${this.app.settings.getLanguage()}"></button>`
+                }
+
                 <button class="settingsButton"></button>
             ${
                 G_IS_STANDALONE || G_IS_DEV
@@ -58,8 +64,10 @@ export class MainMenuState extends GameState {
             </video>
 
             <div class="logo">
-                <img src="${cachebust("res/logo.png")}" alt="shapez.io Logo">
-                <span class="updateLabel">v${G_BUILD_VERSION}</span>
+                <img src="${cachebust(
+                    G_CHINA_VERSION ? "res/logo_cn.png" : "res/logo.png"
+                )}" alt="shapez.io Logo">
+                <span class="updateLabel">v${G_BUILD_VERSION} - Puzzle DLC!</span>
             </div>
 
             <div class="mainWrapper ${showDemoBadges ? "demo" : "noDemo"}">
@@ -75,13 +83,22 @@ export class MainMenuState extends GameState {
                     }
                     <div class="buttons"></div>
                 </div>
+                <div class="bottomContainer">
+                    <div class="buttons"></div>
+                </div>
             </div>
 
-            <div class="footer">
+            <div class="footer ${G_CHINA_VERSION ? "china" : ""}">
+
+                ${
+                    G_CHINA_VERSION
+                        ? ""
+                        : `
                 <a class="githubLink boxLink" target="_blank">
                     ${T.mainMenu.openSourceHint}
                     <span class="thirdpartyLogo githubLogo"></span>
-                </a>
+                </a>`
+                }
 
                 <a class="discordLink boxLink" target="_blank">
                     ${T.mainMenu.discordLink}
@@ -89,12 +106,13 @@ export class MainMenuState extends GameState {
                 </a>
 
                 <div class="sidelinks">
-                    <a class="redditLink">${T.mainMenu.subreddit}</a>
+                    ${G_CHINA_VERSION ? "" : `<a class="redditLink">${T.mainMenu.subreddit}</a>`}
 
-                    <a class="changelog">${T.changelog.title}</a>
+                    ${G_CHINA_VERSION ? "" : `<a class="changelog">${T.changelog.title}</a>`}
 
-                    <a class="helpTranslate">${T.mainMenu.helpTranslate}</a>
+                    ${G_CHINA_VERSION ? "" : `<a class="helpTranslate">${T.mainMenu.helpTranslate}</a>`}
                 </div>
+
 
                 <div class="author">${T.mainMenu.madeBy.replace(
                     "<author-link>",
@@ -189,6 +207,11 @@ export class MainMenuState extends GameState {
 
         const qs = this.htmlElement.querySelector.bind(this.htmlElement);
 
+        if (G_IS_DEV && globalConfig.debug.testPuzzleMode) {
+            this.onPuzzleModeButtonClicked(true);
+            return;
+        }
+
         if (G_IS_DEV && globalConfig.debug.fastGameEnter) {
             const games = this.app.savegameMgr.getSavegamesMetaData();
             if (games.length > 0 && globalConfig.debug.resumeGameOnFastEnter) {
@@ -208,10 +231,13 @@ export class MainMenuState extends GameState {
         });
 
         this.trackClicks(qs(".settingsButton"), this.onSettingsButtonClicked);
-        this.trackClicks(qs(".changelog"), this.onChangelogClicked);
-        this.trackClicks(qs(".redditLink"), this.onRedditClicked);
-        this.trackClicks(qs(".languageChoose"), this.onLanguageChooseClicked);
-        this.trackClicks(qs(".helpTranslate"), this.onTranslationHelpLinkClicked);
+
+        if (!G_CHINA_VERSION) {
+            this.trackClicks(qs(".languageChoose"), this.onLanguageChooseClicked);
+            this.trackClicks(qs(".redditLink"), this.onRedditClicked);
+            this.trackClicks(qs(".changelog"), this.onChangelogClicked);
+            this.trackClicks(qs(".helpTranslate"), this.onTranslationHelpLinkClicked);
+        }
 
         if (G_IS_STANDALONE) {
             this.trackClicks(qs(".exitAppButton"), this.onExitAppButtonClicked);
@@ -228,23 +254,29 @@ export class MainMenuState extends GameState {
         const discordLink = this.htmlElement.querySelector(".discordLink");
         this.trackClicks(
             discordLink,
-            () => this.app.platformWrapper.openExternalLink(THIRDPARTY_URLS.discord),
+            () => {
+                this.app.analytics.trackUiClick("main_menu_link_discord");
+                this.app.platformWrapper.openExternalLink(THIRDPARTY_URLS.discord);
+            },
             { preventClick: true }
         );
 
         const githubLink = this.htmlElement.querySelector(".githubLink");
-        this.trackClicks(
-            githubLink,
-            () => this.app.platformWrapper.openExternalLink(THIRDPARTY_URLS.github),
-            { preventClick: true }
-        );
+        if (githubLink) {
+            this.trackClicks(
+                githubLink,
+                () => {
+                    this.app.analytics.trackUiClick("main_menu_link_github");
+                    this.app.platformWrapper.openExternalLink(THIRDPARTY_URLS.github);
+                },
+                { preventClick: true }
+            );
+        }
 
         const producerLink = this.htmlElement.querySelector(".producerLink");
-        this.trackClicks(
-            producerLink,
-            () => this.app.platformWrapper.openExternalLink("https://tobspr.com"),
-            { preventClick: true }
-        );
+        this.trackClicks(producerLink, () => this.app.platformWrapper.openExternalLink("https://tobspr.io"), {
+            preventClick: true,
+        });
     }
 
     renderMainMenu() {
@@ -281,6 +313,37 @@ export class MainMenuState extends GameState {
             this.trackClicks(playBtn, this.onPlayButtonClicked);
             buttonContainer.appendChild(importButtonElement);
         }
+
+        const bottomButtonContainer = this.htmlElement.querySelector(".bottomContainer .buttons");
+        removeAllChildren(bottomButtonContainer);
+
+        const puzzleModeButton = makeButton(bottomButtonContainer, ["styledButton"], T.mainMenu.puzzleMode);
+
+        bottomButtonContainer.appendChild(puzzleModeButton);
+        this.trackClicks(puzzleModeButton, () => this.onPuzzleModeButtonClicked());
+    }
+
+    onPuzzleModeButtonClicked(force = false) {
+        const hasUnlockedBlueprints = this.app.savegameMgr.getSavegamesMetaData().some(s => s.level >= 12);
+        console.log(hasUnlockedBlueprints);
+        if (!force && !hasUnlockedBlueprints) {
+            const { ok } = this.dialogs.showWarning(
+                T.dialogs.puzzlePlayRegularRecommendation.title,
+                T.dialogs.puzzlePlayRegularRecommendation.desc,
+                ["cancel:good", "ok:bad:timeout"]
+            );
+            ok.add(() => this.onPuzzleModeButtonClicked(true));
+            return;
+        }
+
+        this.moveToState("LoginState", {
+            nextStateId: "PuzzleMenuState",
+        });
+    }
+
+    onBackButtonClicked() {
+        this.renderMainMenu();
+        this.renderSavegames();
     }
 
     onSteamLinkClicked() {

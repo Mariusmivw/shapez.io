@@ -12,6 +12,8 @@ import { SavegameInterface_V1004 } from "./schemas/1004";
 import { SavegameInterface_V1005 } from "./schemas/1005";
 import { SavegameInterface_V1006 } from "./schemas/1006";
 import { SavegameInterface_V1007 } from "./schemas/1007";
+import { SavegameInterface_V1008 } from "./schemas/1008";
+import { SavegameInterface_V1009 } from "./schemas/1009";
 
 const logger = createLogger("savegame");
 
@@ -52,7 +54,7 @@ export class Savegame extends ReadWriteProxy {
      * @returns {number}
      */
     static getCurrentVersion() {
-        return 1007;
+        return 1009;
     }
 
     /**
@@ -77,7 +79,11 @@ export class Savegame extends ReadWriteProxy {
         return {
             version: this.getCurrentVersion(),
             dump: null,
-            stats: {},
+            stats: {
+                failedMam: false,
+                trashedCount: 0,
+                usedInverseRotater: false,
+            },
             lastUpdate: Date.now(),
         };
     }
@@ -124,6 +130,16 @@ export class Savegame extends ReadWriteProxy {
         if (data.version === 1006) {
             SavegameInterface_V1007.migrate1006to1007(data);
             data.version = 1007;
+        }
+
+        if (data.version === 1007) {
+            SavegameInterface_V1008.migrate1007to1008(data);
+            data.version = 1008;
+        }
+
+        if (data.version === 1008) {
+            SavegameInterface_V1009.migrate1008to1009(data);
+            data.version = 1009;
         }
 
         return ExplainedResult.good();

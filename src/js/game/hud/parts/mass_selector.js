@@ -1,19 +1,19 @@
-import { BaseHUDPart } from "../base_hud_part";
-import { Vector } from "../../../core/vector";
-import { STOP_PROPAGATION } from "../../../core/signal";
-import { DrawParameters } from "../../../core/draw_parameters";
-import { Entity } from "../../entity";
-import { Loader } from "../../../core/loader";
 import { globalConfig } from "../../../core/config";
-import { makeDiv, formatBigNumber, formatBigNumberFull } from "../../../core/utils";
-import { DynamicDomAttach } from "../dynamic_dom_attach";
+import { DrawParameters } from "../../../core/draw_parameters";
 import { createLogger } from "../../../core/logging";
-import { enumMouseButton } from "../../camera";
+import { STOP_PROPAGATION } from "../../../core/signal";
+import { formatBigNumberFull } from "../../../core/utils";
+import { Vector } from "../../../core/vector";
+import { ACHIEVEMENTS } from "../../../platform/achievement_provider";
 import { T } from "../../../translations";
+import { Blueprint } from "../../blueprint";
+import { enumMouseButton } from "../../camera";
+import { Component } from "../../component";
+import { Entity } from "../../entity";
 import { KEYMAPPINGS } from "../../key_action_mapper";
 import { THEME } from "../../theme";
 import { enumHubGoalRewards } from "../../tutorial_goals";
-import { Blueprint } from "../../blueprint";
+import { BaseHUDPart } from "../base_hud_part";
 
 const logger = createLogger("hud/mass_selector");
 
@@ -32,12 +32,13 @@ export class HUDMassSelector extends BaseHUDPart {
         this.root.camera.movePreHandler.add(this.onMouseMove, this);
         this.root.camera.upPostHandler.add(this.onMouseUp, this);
 
-        this.root.keyMapper.getBinding(KEYMAPPINGS.general.back).add(this.onBack, this);
+        this.root.keyMapper.getBinding(KEYMAPPINGS.general.back).addToTop(this.onBack, this);
         this.root.keyMapper
             .getBinding(KEYMAPPINGS.massSelect.confirmMassDelete)
             .add(this.confirmDelete, this);
         this.root.keyMapper.getBinding(KEYMAPPINGS.massSelect.massSelectCut).add(this.confirmCut, this);
         this.root.keyMapper.getBinding(KEYMAPPINGS.massSelect.massSelectCopy).add(this.startCopy, this);
+        this.root.keyMapper.getBinding(KEYMAPPINGS.massSelect.massSelectClear).add(this.clearBelts, this);
 
         this.root.hud.signals.selectedPlacementBuildingChanged.add(this.clearSelection, this);
         this.root.signals.editModeChanged.add(this.clearSelection, this);
@@ -100,6 +101,7 @@ export class HUDMassSelector extends BaseHUDPart {
          */
         const mapUidToEntity = this.root.entityMgr.getFrozenUidSearchMap();
 
+        let count = 0;
         this.root.logic.performBulkOperation(() => {
             for (let i = 0; i < entityUids.length; ++i) {
                 const uid = entityUids[i];
@@ -111,8 +113,12 @@ export class HUDMassSelector extends BaseHUDPart {
 
                 if (!this.root.logic.tryDeleteBuilding(entity)) {
                     logger.error("Error in mass delete, could not remove building");
+                } else {
+                    count++;
                 }
             }
+
+            this.root.signals.achievementCheck.dispatch(ACHIEVEMENTS.destroy1000, count);
         });
 
         // Clear uids later
@@ -134,6 +140,16 @@ export class HUDMassSelector extends BaseHUDPart {
         } else {
             this.root.soundProxy.playUiError();
         }
+    }
+
+    clearBelts() {
+        for (const uid of this.selectedUids) {
+            const entity = this.root.entityMgr.findByUid(uid);
+            for (const component of Object.values(entity.components)) {
+                /** @type {Component} */ (component).clear();
+            }
+        }
+        this.selectedUids = new Set();
     }
 
     confirmCut() {
