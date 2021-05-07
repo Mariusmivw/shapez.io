@@ -41,7 +41,6 @@ jobs:
         #       - yarn gulp build.standalone-prod || travis_terminate 1
         #       - yarn gulp standalone.prepare
         #       - yarn gulp standalone.package.prod.win64
-        #       - yarn gulp standalone.package.prod.win32
         #       - cd ..
 
         ## -> build linux
@@ -56,31 +55,66 @@ jobs:
         #       - yarn gulp build.standalone-prod || travis_terminate 1
         #       - yarn gulp standalone.prepare
         #       - yarn gulp standalone.package.prod.linux64
-        #       - yarn gulp standalone.package.prod.linux32
         #       - cd ..
 
         # OS: LINUX
         ## -> build darwin
-        ## not possible
+        - name: "Standalone MacOS on Linux"
+          os: linux
+          addons:
+              apt:
+                  packages:
+                      - libavformat-dev
+                      - libavfilter-dev
+                      - libavdevice-dev
+                      - ffmpeg
+                      - wine
+          script:
+              - cd gulp
+              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp standalone.prepare
+              - yarn gulp standalone.package.prod.darwin64
+              - cd ..
+              - tar -cf shapez.io-darwin64.tar.xz tmp_standalone_files/shapez.io-standalone-darwin-x64/
+          deploy:
+            provider: releases
+            api_key:
+              secure: PleoviZ4vUNNEAcSM1p/X2S4S0BMjiYT7ORgtTaLA7OtnUKoHkWQBDgIrIB0YKl/dFpHkIDIGirR4+q6K1Zx+kgLrC0lP01mfurgM6PzYKDTMpbmynfzrRtltoBf2zthIfxMlFpOH/4HXiZzHLeVinSybQQtHDjEH+fgSj9eEZDADLGL33Z76GsfnUyi6Djq9659JuChYWmCXz4+zVo/V3uZCREYge11X/Dyp8dbxVIU0dimZATYkeycvs1S347app+PJFyaAoxkBM2vh91Rcc7RtQdj7wu740A8kyg/m+tvXYJOeSOSpbONXkTysSeOam4moptMoDQu+vwjuLmlH1jSzjQ5qnL48Ie6nVTuSvVgnLPWC/2h+C3Mi2Ai2zE3zO3dIH3q0/nAWHycJD/J4b4mv4OGuwtu4T0FeAgMfq0Xc5eCx3Q3lLgiOhM5iBdxvW75pbEmLyQti+zudONrS1ZJarctPXYlc1h/j552Xz+DEEOpI4SfwbdqUzI+GuEq/zizic+BNNIYqJagMsQh7X7jFwBWxPmMX6Nogi4YLdQ4XPhW1tmc6NewbhBYTWvIdeFw1xz3H24Ys/LEWq6REKEbXqBDcS5Eo9aqitgNZw8ZJ7mZhlrnyeGzaV37k7xjQsYJN8hB/eszyzoJT2YUHKPUXjluCMGMhdDcqZSrgXU=
+            file: shapez.io-darwin64.tar.xz
+            draft: 'true'
+            on:
+              repo: Mariusmivw/shapez.io
+              branch: release_branch
+            skip_cleanup: 'true'
 
         ## -> build win
-        # - name: "Standalone Windows on Linux"
-        #   os: linux
-        #   addons:
-        #       apt:
-        #           packages:
-        #               - libavformat-dev
-        #               - libavfilter-dev
-        #               - libavdevice-dev
-        #               - ffmpeg
-        #               - wine
-        #   script:
-        #       - cd gulp
-        #       - yarn gulp build.standalone-prod || travis_terminate 1
-        #       - yarn gulp standalone.prepare
-        #       - yarn gulp standalone.package.prod.win64
-        #       - yarn gulp standalone.package.prod.win32
-        #       - cd ..
+        - name: "Standalone Windows on Linux"
+          os: linux
+          addons:
+              apt:
+                  packages:
+                      - libavformat-dev
+                      - libavfilter-dev
+                      - libavdevice-dev
+                      - ffmpeg
+                      - wine
+          script:
+              - cd gulp
+              - yarn gulp build.standalone-prod || travis_terminate 1
+              - yarn gulp standalone.prepare
+              - yarn gulp standalone.package.prod.win64
+              - cd ..
+              - tar -cf shapez.io-win64.tar.xz tmp_standalone_files/shapez.io-standalone-win32-x64/
+          deploy:
+            provider: releases
+            api_key:
+              secure: PleoviZ4vUNNEAcSM1p/X2S4S0BMjiYT7ORgtTaLA7OtnUKoHkWQBDgIrIB0YKl/dFpHkIDIGirR4+q6K1Zx+kgLrC0lP01mfurgM6PzYKDTMpbmynfzrRtltoBf2zthIfxMlFpOH/4HXiZzHLeVinSybQQtHDjEH+fgSj9eEZDADLGL33Z76GsfnUyi6Djq9659JuChYWmCXz4+zVo/V3uZCREYge11X/Dyp8dbxVIU0dimZATYkeycvs1S347app+PJFyaAoxkBM2vh91Rcc7RtQdj7wu740A8kyg/m+tvXYJOeSOSpbONXkTysSeOam4moptMoDQu+vwjuLmlH1jSzjQ5qnL48Ie6nVTuSvVgnLPWC/2h+C3Mi2Ai2zE3zO3dIH3q0/nAWHycJD/J4b4mv4OGuwtu4T0FeAgMfq0Xc5eCx3Q3lLgiOhM5iBdxvW75pbEmLyQti+zudONrS1ZJarctPXYlc1h/j552Xz+DEEOpI4SfwbdqUzI+GuEq/zizic+BNNIYqJagMsQh7X7jFwBWxPmMX6Nogi4YLdQ4XPhW1tmc6NewbhBYTWvIdeFw1xz3H24Ys/LEWq6REKEbXqBDcS5Eo9aqitgNZw8ZJ7mZhlrnyeGzaV37k7xjQsYJN8hB/eszyzoJT2YUHKPUXjluCMGMhdDcqZSrgXU=
+            file: shapez.io-win64.tar.xz
+            draft: 'true'
+            on:
+              repo: Mariusmivw/shapez.io
+              branch: release_branch
+            skip_cleanup: 'true'
 
         ## -> build linux
         - name: "Standalone Linux on Linux"
@@ -97,15 +131,22 @@ jobs:
               - yarn gulp build.standalone-prod || travis_terminate 1
               - yarn gulp standalone.prepare
               - yarn gulp standalone.package.prod.linux64
-              - yarn gulp standalone.package.prod.linux32
               - cd ..
+              - tar -cf shapez.io-linux64.tar.xz tmp_standalone_files/shapez.io-standalone-linux-x64/
+          deploy:
+            provider: releases
+            api_key:
+              secure: PleoviZ4vUNNEAcSM1p/X2S4S0BMjiYT7ORgtTaLA7OtnUKoHkWQBDgIrIB0YKl/dFpHkIDIGirR4+q6K1Zx+kgLrC0lP01mfurgM6PzYKDTMpbmynfzrRtltoBf2zthIfxMlFpOH/4HXiZzHLeVinSybQQtHDjEH+fgSj9eEZDADLGL33Z76GsfnUyi6Djq9659JuChYWmCXz4+zVo/V3uZCREYge11X/Dyp8dbxVIU0dimZATYkeycvs1S347app+PJFyaAoxkBM2vh91Rcc7RtQdj7wu740A8kyg/m+tvXYJOeSOSpbONXkTysSeOam4moptMoDQu+vwjuLmlH1jSzjQ5qnL48Ie6nVTuSvVgnLPWC/2h+C3Mi2Ai2zE3zO3dIH3q0/nAWHycJD/J4b4mv4OGuwtu4T0FeAgMfq0Xc5eCx3Q3lLgiOhM5iBdxvW75pbEmLyQti+zudONrS1ZJarctPXYlc1h/j552Xz+DEEOpI4SfwbdqUzI+GuEq/zizic+BNNIYqJagMsQh7X7jFwBWxPmMX6Nogi4YLdQ4XPhW1tmc6NewbhBYTWvIdeFw1xz3H24Ys/LEWq6REKEbXqBDcS5Eo9aqitgNZw8ZJ7mZhlrnyeGzaV37k7xjQsYJN8hB/eszyzoJT2YUHKPUXjluCMGMhdDcqZSrgXU=
+            file: shapez.io-linux64.tar.xz
+            draft: 'true'
+            on:
+              repo: Mariusmivw/shapez.io
+              branch: release_branch
+            skip_cleanup: 'true'
 
         # OS: WINDOWS
         ## -> build darwin
-        ## not possible
-
-        ## -> build linux
-        # - name: "Standalone Linux on Windows"
+        # - name: "Standalone MacOS on Windows"
         #   os: windows
         #   env: YARN_GPG=no
         #   before_install:
@@ -118,8 +159,7 @@ jobs:
         #       - cd gulp
         #       - yarn gulp build.standalone-prod || travis_terminate 1
         #       - yarn gulp standalone.prepare
-        #       - yarn gulp standalone.package.prod.linux64
-        #       - yarn gulp standalone.package.prod.linux32
+        #       - yarn gulp standalone.package.prod.darwin64
         #       - cd ..
 
         ## -> build win
@@ -138,7 +178,23 @@ jobs:
         #       - yarn gulp build.standalone-prod || travis_terminate 1
         #       - yarn gulp standalone.prepare
         #       - yarn gulp standalone.package.prod.win64
-        #       - yarn gulp standalone.package.prod.win32
+        #       - cd ..
+
+        ## -> build linux
+        # - name: "Standalone Linux on Windows"
+        #   os: windows
+        #   env: YARN_GPG=no
+        #   before_install:
+        #       - choco install git-lfs -y -f || echo "0" # choco fails but git-lfs is still installed
+        #       - choco install ffmpeg --version=4.2.3
+        #       - export PATH=/C/ProgramData/chocolatey/lib/ffmpeg/tools/ffmpeg/bin:$PATH
+        #       - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/avicap32.dll -P /C/Windows/System32/
+        #       - wget https://github.com/moiamond/docker-ffmpeg-base-windowsservercore/raw/master/System32/msvfw32.dll -P /C/Windows/System32/
+        #   script:
+        #       - cd gulp
+        #       - yarn gulp build.standalone-prod || travis_terminate 1
+        #       - yarn gulp standalone.prepare
+        #       - yarn gulp standalone.package.prod.linux64
         #       - cd ..
 
     # mark build as finished even if "allow_failures" are still running

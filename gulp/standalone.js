@@ -108,7 +108,7 @@ function gulptasksStandalone($, gulp) {
 
         /**
          *
-         * @param {'win32'|'linux'} platform
+         * @param {'win32'|'linux'|'darwin'} platform
          * @param {'x64'|'ia32'} arch
          * @param {function():void} cb
          */
@@ -178,9 +178,8 @@ function gulptasksStandalone($, gulp) {
         }
 
         gulp.task(taskPrefix + "standalone.package.prod.win64", cb => packageStandalone("win32", "x64", cb));
-        gulp.task(taskPrefix + "standalone.package.prod.linux64", cb =>
-            packageStandalone("linux", "x64", cb)
-        );
+        gulp.task(taskPrefix + "standalone.package.prod.linux64", cb => packageStandalone("linux", "x64", cb));
+        gulp.task(taskPrefix + "standalone.package.prod.darwin64", cb => packageStandalone("darwin", "x64", cb));
 
         gulp.task(
             taskPrefix + "standalone.package.prod",
@@ -188,7 +187,8 @@ function gulptasksStandalone($, gulp) {
                 taskPrefix + "standalone.prepare",
                 gulp.parallel(
                     taskPrefix + "standalone.package.prod.win64",
-                    taskPrefix + "standalone.package.prod.linux64"
+                    taskPrefix + "standalone.package.prod.linux64",
+                    taskPrefix + "standalone.package.prod.darwin64"
                 )
             )
         );
