@@ -12,9 +12,7 @@
     "devDependencies": {
         "electron": "10.4.3"
     },
-    "optionalDependencies": {
-        "shapez.io-private-artifacts": "github:tobspr/shapez.io-private-artifacts#abi-v82"
-    },
+	"//optionalDependencies": "{\"shapez.io-private-artifacts\": \"github:tobspr/shapez.io-private-artifacts#abi-v82\"}",
     "dependencies": {
         "async-lock": "^1.2.8"
     }
